@@ -5,11 +5,19 @@ const fs = require('fs');
 // 创建一个express应用
 const app = express();
 
+app.all('*', function (_req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Methods', '*');
+  res.header('Content-Type', 'application/json;charset=utf-8');
+  next();
+});
+
 // 解析JSON格式的请求体
 app.use(express.json());
 
 // 设置一个GET请求，响应一个简单的消息
-app.get('/get', (_, res) => {
+app.get('/get', (_req, res) => {
     const ret = fs.readFileSync('data.json','utf8');
     
     res.status(200).send(ret)
