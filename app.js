@@ -1,5 +1,6 @@
 // 引入express模块
 const express = require('express');
+const fs = require('fs');
 
 // 创建一个express应用
 const app = express();
@@ -8,16 +9,22 @@ const app = express();
 app.use(express.json());
 
 // 设置一个GET请求，响应一个简单的消息
-app.get('/hello', (req, res) => {
-  res.send('Hello, world!');
+app.get('/get', (_, res) => {
+    const ret = fs.readFileSync('data.json','utf8');
+    
+    res.status(200).send(ret)
 });
 
 // 设置一个POST请求，接受JSON数据并返回
-app.post('/data', (req, res) => {
-  const receivedData = req.body; // 获取请求体中的数据
-  res.json({
+app.post('/set', (req, res) => {
+  const data = req.body; 
+
+  const jsonData = JSON.stringify(data, null, 2); 
+  fs.writeFileSync('data.json', jsonData, 'utf8');
+
+  res.status(201).json({
     message: 'Data received successfully!',
-    data: receivedData
+    data
   });
 });
 
@@ -26,3 +33,4 @@ const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
